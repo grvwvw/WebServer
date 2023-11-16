@@ -1,5 +1,9 @@
 package com.webserver.core;
 
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+
 /**
  * WebServer主类
  * WebServer是一个Web容器，实现了Tomcat中的基础功能，通过这个项目的学习了解Tomcat的底层工作逻辑。
@@ -11,4 +15,30 @@ package com.webserver.core;
  * 网络应用(webapp):包含的内容大致有:网页，处理业务的代码，其他资源等。就是俗称的"网站"
  */
 public class WebServerApplication {
+    private ServerSocket serverSocket;
+    public WebServerApplication(){
+        try {
+            System.out.println("正在启动服务器...");
+            serverSocket = new ServerSocket(8088);
+            System.out.println("服务端启动完毕...");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void start(){
+        try {
+            System.out.println("等待客户端连接...");
+            Socket socket = serverSocket.accept();
+            System.out.println("一个客户端连接啦...");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    public static void main(String[] args) {
+        WebServerApplication application = new WebServerApplication();
+        application.start();
+    }
 }
