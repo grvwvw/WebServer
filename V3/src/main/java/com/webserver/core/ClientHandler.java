@@ -16,10 +16,20 @@ public class ClientHandler implements Runnable{
     public void run() {
         try {
             InputStream in = socket.getInputStream();
+
+            char pre = 'a', cur = 'a';
+            StringBuilder builder = new StringBuilder();
             int d;
-            while((d = in.read()) != -1){
-                System.out.print((char)d);
+            while((d = in.read()) != -1) //循环读入当前的字符
+            {
+                cur = (char)d;
+                if(pre == 13 && cur == 10) // 如果上一个字符不是回车（13 CR）且当前字符不是换行（10 LF），则一直执行循环
+                    break;
+                builder.append(cur);
+                pre = cur;
             }
+            String line = builder.toString().trim(); //使用trim()是为了删除字符串最后的一个CR
+            System.out.println(line);
 
         } catch (Exception e) {
             throw new RuntimeException(e);
