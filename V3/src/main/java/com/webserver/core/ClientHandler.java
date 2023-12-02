@@ -31,6 +31,15 @@ public class ClientHandler implements Runnable{
             String line = builder.toString().trim(); //使用trim()是为了删除字符串最后的一个CR
             System.out.println(line);
 
+            String[] parts = line.split("\\s");
+            String method = parts[0];
+            String uri = parts[1];
+            String protocol = parts[2];
+
+            System.out.println("method: " + method);
+            System.out.println("uri: " + uri); //可能会出现下标越界异常，浏览器请求空
+            System.out.println("protocol: " + protocol);
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
