@@ -96,4 +96,20 @@ public class HttpServletRequest {
         }
         return builder.toString().trim(); //使用trim()是为了删除字符串最后的一个CR
     }
+
+    public String getMethod() {
+        return method;
+    }
+
+    public String getUri() {
+        return uri;
+    }
+
+    public String getProtocol() {
+        return protocol;
+    }
+
+    public String getHeader(String name){ // 获取的是消息头中key对应的value
+        return headers.get(name);
+    }
 }
