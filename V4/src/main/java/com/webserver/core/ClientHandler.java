@@ -3,6 +3,9 @@ package com.webserver.core;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 该线程任务负责与指定客户端完成HTTP交互请求
@@ -31,9 +34,17 @@ public class ClientHandler implements Runnable{
             System.out.println("protocol: " + protocol);
 
             //1.2 解析消息头
-            while(!(line = readLine()).isEmpty()){ //.优先级比=要高
-                System.out.println(line);
+            Map<String, String> map = new HashMap<>();
+
+            while(true){ //.优先级比=要高
+                line = readLine();
+                if(line.isEmpty()) break;
+
+                String[] s = line.split(":"); //根据:进行拆分
+                map.put(s[0], s[1]);
             }
+
+            map.forEach((k, v)-> System.out.println(k + ": " + v));
 
         } catch (Exception e) {
             throw new RuntimeException(e);
