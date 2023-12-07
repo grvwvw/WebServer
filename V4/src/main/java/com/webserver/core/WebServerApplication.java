@@ -34,7 +34,7 @@ public class WebServerApplication {
 
             // 启动一个线程处理客户端交互
             ClientHandler handler = new ClientHandler(socket);
-            Thread t = new Thread(handler);
+            Thread t = new Thread(handler); // Clienthandler中继承Runnable接口，也就是直接实现了run()方法
             t.start();
 
         } catch (IOException e) {

@@ -34,17 +34,18 @@ public class ClientHandler implements Runnable{
             System.out.println("protocol: " + protocol);
 
             //1.2 解析消息头
-            Map<String, String> map = new HashMap<>();
+            Map<String, String> headers = new HashMap<>();
 
             while(true){ //.优先级比=要高
                 line = readLine();
                 if(line.isEmpty()) break;
 
-                String[] s = line.split(":"); //根据:进行拆分
-                map.put(s[0], s[1]);
+                String[] s = line.split(":\\s"); //根据:进行拆分
+                headers.put(s[0], s[1]);
             }
 
-            map.forEach((k, v)-> System.out.println(k + ": " + v));
+            System.out.println("headers:" + headers);
+            // headers.forEach((k, v)-> System.out.println(k + ":" + v));
 
         } catch (Exception e) {
             throw new RuntimeException(e);
