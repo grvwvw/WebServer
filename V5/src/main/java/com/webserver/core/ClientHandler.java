@@ -1,5 +1,7 @@
 package com.webserver.core;
 
+import com.webserver.http.HttpServletRequest;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
@@ -20,55 +22,16 @@ public class ClientHandler implements Runnable{
     public void run() {
         try {
             //1 解析请求
-            //1.1 解析请求行
-            String line = readLine();
-            System.out.println(line);
+            HttpServletRequest request = new HttpServletRequest(socket);
 
-            String[] parts = line.split("\\s");
-            String method = parts[0];
-            String uri = parts[1];
-            String protocol = parts[2];
+            //2 处理请求
 
-            System.out.println("method: " + method);
-            System.out.println("uri: " + uri); //可能会出现下标越界异常，浏览器请求空
-            System.out.println("protocol: " + protocol);
-
-            //1.2 解析消息头
-            Map<String, String> headers = new HashMap<>();
-
-            while(true){ //.优先级比=要高
-                line = readLine();
-                if(line.isEmpty()) break;
-
-                String[] s = line.split(":\\s"); //根据:进行拆分
-                headers.put(s[0], s[1]);
-            }
-
-            System.out.println("headers:" + headers);
-            // headers.forEach((k, v)-> System.out.println(k + ":" + v));
+            //3 发送响应
 
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    /**
-     * 通过socket获取的输入流读取客户端发送过来的一行字符串
-     * @return
-     */
-    private String readLine() throws IOException { //读取一行操作
-        InputStream in = socket.getInputStream();
-        char pre = 'a', cur = 'a';
-        StringBuilder builder = new StringBuilder();
-        int d;
-        while((d = in.read()) != -1) //循环读入当前的字符
-        {
-            cur = (char)d;
-            if(pre == 13 && cur == 10) // 如果上一个字符不是回车（13 CR）且当前字符不是换行（10 LF），则一直执行循环
-                break;
-            builder.append(cur);
-            pre = cur;
-        }
-        return builder.toString().trim(); //使用trim()是为了删除字符串最后的一个CR
-    }
+
 }

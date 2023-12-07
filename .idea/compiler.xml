@@ -10,6 +10,7 @@
         <module name="V2" />
         <module name="V3" />
         <module name="V4" />
+        <module name="V5" />
       </profile>
     </annotationProcessing>
   </component>
