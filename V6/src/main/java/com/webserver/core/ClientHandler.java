@@ -5,9 +5,6 @@ import com.webserver.http.HttpServletRequest;
 import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * 该线程任务负责与指定客户端完成HTTP交互请求
@@ -25,6 +22,14 @@ public class ClientHandler implements Runnable{
             HttpServletRequest request = new HttpServletRequest(socket);
 
             //2 处理请求
+            /**
+             * http://localhost:8088/myweb/index.html
+             * http://localhost:8088/myweb/classTable.html
+             * http://localhost:8088/myweb/123.html //用户的不存在资源
+             * 通过请求对象，获取浏览器地址栏中的抽象路径，然后在服务端(此处是本地)查找
+             */
+            String path = request.getUri();
+
 
             //3 发送响应
             /**
@@ -52,7 +57,7 @@ public class ClientHandler implements Runnable{
             /*
                 在static目录下寻找index.html文件
              */
-            File file = new File(staticDir, "myweb/index.html");
+            File file = new File(staticDir, path);
 
             System.out.println("资源是否存在" + file.exists());
 
