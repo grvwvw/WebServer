@@ -32,44 +32,25 @@ public class ClientHandler implements Runnable{
 
 
             //3 发送响应
-            /**
-             * 定位要发送的文件(将src/main/resources/static/myweb/index.html)
-             *
-             *  定义为resources目录(maven项目中的src/main/java和src/main/resources实际上是一个目录)
-             *  只不过java目录中存放的都是.java源代码文件
-             *  而resources存放的都是其他程序所需要用到的文件
-             *
-             *  实际开发过程中使用的相对路径是类加载路径
-             *  类加载路径: 类名.class.getClassLoader().getResource(".")就是类加载路径
-             *
-             *  这里可以理解为是src/main/java和src/main/resources，是指编译后都位于target目录中
-             */
-            File root = new File(
-                    ClientHandler.class.getClassLoader().getResource(".").toURI()
-            ); //定位到了resources目录
-
-            /*
-                root表达的是src/main/java或者src/main/resources目录
-                从root开始寻找static目录
-             */
+            File root = new File(ClientHandler.class.getClassLoader().getResource(".").toURI()); //定位到了resources目录
             File staticDir = new File(root, "static");
-
-            /*
-                在static目录下寻找index.html文件
-             */
             File file = new File(staticDir, path);
 
             System.out.println("资源是否存在" + file.exists());
 
-            /**
-             * 响应大致内容：
-             * HTTP/1.1 200 OK(CRLF)
-             * Content-Type: text/html(CRLF)
-             * Content-Length: 2546(CRLF)(CRLF)
-             * 1011101011101011011...
-             */
+            int statusCode; // 状态代码
+            String statusReason; //状态描述
+            if(file.isFile()){ // 当file表示的文件真实存在，并且是一个真实的文件时才会返回true，不使用.exists()是因为会有不输入path路径的情况，相当于只查看路径是否存在
+                statusCode = 200;
+                statusReason = "OK";
+            }else{ // 要么file表示的时一个目录，要么不存在
+                statusCode = 404;
+                statusReason = "NotFound";
+                file = new File(staticDir, "root/404.html"); //将原本的文件路径修改到root/404.html文件处
+            }
+
             //3.1 发送请求行
-            println("HTTP/1.1 200 OK");
+            println("HTTP/1.1 " + statusCode + " " + statusReason);
 
             //3.2 发送响应头
             println("Content-Type: text/html");
