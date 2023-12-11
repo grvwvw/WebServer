@@ -33,14 +33,36 @@ public class HttpServletResponse {
      */
     public void response() throws IOException {
         //3.1 发送请求行
-        println("HTTP/1.1 " + statusCode + " " + statusReason);
+        sendStatusLine();
 
         //3.2 发送响应头
+        sendHeaders();
+
+        //3.3 发送响应正文(index.html页面中的数据)
+        sendContent();
+
+    }
+
+    /**
+     * 发送请求行
+     */
+    private void sendStatusLine() throws IOException {
+        println("HTTP/1.1 " + statusCode + " " + statusReason);
+    }
+
+    /**
+     * 发送响应头
+     */
+    private void sendHeaders() throws IOException {
         println("Content-Type: text/html");
         println("Content-Length: " + contentFile.length());
         println(""); // 单独再发送一个CRLF
+    }
 
-        //3.3 发送响应正文(index.html页面中的数据)
+    /**
+     * 发送响应正文
+     */
+    private void sendContent() throws IOException {
         OutputStream out = socket.getOutputStream();
         FileInputStream fis = new FileInputStream(contentFile);
         int len;
