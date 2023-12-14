@@ -22,7 +22,7 @@ public class DispatcherServlet {
         }
     }
 
-    public void service(HttpServletRequest request, HttpServletResponse response) throws URISyntaxException {
+    public void service(HttpServletRequest request, HttpServletResponse response){
         String path = request.getUri();
 
         File file = new File(staticDir, path);
