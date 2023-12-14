@@ -28,15 +28,16 @@ public class WebServerApplication {
 
     public void start(){
         try {
-            System.out.println("等待客户端连接...");
-            Socket socket = serverSocket.accept();
-            System.out.println("一个客户端连接啦...");
+            while(true){
+                System.out.println("等待客户端连接...");
+                Socket socket = serverSocket.accept();
+                System.out.println("一个客户端连接啦...");
 
-            // 启动一个线程处理客户端交互
-            ClientHandler handler = new ClientHandler(socket);
-            Thread t = new Thread(handler); // Clienthandler中继承Runnable接口，也就是直接实现了run()方法
-            t.start();
-
+                // 启动一个线程处理客户端交互
+                ClientHandler handler = new ClientHandler(socket);
+                Thread t = new Thread(handler); // Clienthandler中继承Runnable接口，也就是直接实现了run()方法
+                t.start();
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
