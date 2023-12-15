@@ -31,12 +31,25 @@ public class DispatcherServlet {
 
         if(file.isFile()){ // 当file表示的文件真实存在，并且是一个真实的文件时才会返回true，不使用.exists()是因为会有不输入path路径的情况，相当于只查看路径是否存在
             response.setContentFile(file);
+
+            response.addHeader("Content-Type", "text/html");
+            response.addHeader("Content-Length", file.length() + "");
+
+
         }else{ // 要么file表示的时一个目录，要么不存在
             response.setStatusCode(404);
             response.setStatusReason("NotFound");
 
             file = new File(staticDir, "root/404.html"); //将原本的文件路径修改到root/404.html文件处
             response.setContentFile(file); // 设置对应的404文件位置
+
+            response.addHeader("Content-Type", "text/html");
+            response.addHeader("Content-Length", file.length() + "");
+
         }
+
+        // 测试添加一个额外的响应头
+        response.addHeader("Server", "WebServer");
+
     }
 }

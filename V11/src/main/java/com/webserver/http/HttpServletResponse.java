@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 响应对象
@@ -57,8 +58,25 @@ public class HttpServletResponse {
      * 发送响应头
      */
     private void sendHeaders() throws IOException {
-        println("Content-Type: text/html");
-        println("Content-Length: " + contentFile.length());
+//        println("Content-Type: text/html");
+//        println("Content-Length: " + contentFile.length());
+
+        /*
+         * headers这个Map中的内容：
+         * key                          value
+         * Content-Type                 text/html
+         * Content-Length               1563
+         * Server                       WebServer
+         * ...
+         */
+        // 遍历headers中的所有响应头，发送给客户端
+        Set<Map.Entry<String, String>> entrySet = headers.entrySet();
+        for(Map.Entry<String, String> e: entrySet){
+            String key = e.getKey();
+            String value = e.getValue();
+            println(key + ": " + value);
+        }
+
         println(""); // 单独再发送一个CRLF，因此在此输入一个空字符串到方法
     }
 
