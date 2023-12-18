@@ -21,6 +21,9 @@ public class HttpServletRequest {
     private String method; //请求方式
     private String uri; //抽象路径
     private String protocol; //协议版本
+    private String requestURI; // 保存uri？左侧的内容
+    private String queryString; // 保存uri ？右侧的部分，也就是参数部分
+    private Map<String, String> parameters = new HashMap<>(); //保存客户端传递过来的每一组参数
     private Map<String, String> headers = new HashMap<>(); //消息头相关信息
 
     public HttpServletRequest(Socket socket) throws IOException, EmptyRequestException {
@@ -53,9 +56,38 @@ public class HttpServletRequest {
         uri = parts[1];
         protocol = parts[2];
 
+        // 进一步解析uri
+        parseUri();
+
         System.out.println("method: " + method);
         System.out.println("uri: " + uri); //可能会出现下标越界异常，浏览器请求空
         System.out.println("protocol: " + protocol);
+    }
+
+    /**
+     * 进一步解析URI
+     */
+    private void parseUri(){
+        /**
+         * uri有参数是两种情况：1.不含参数的  2.含参数的
+         * 例如：
+         * 1. 不含参数的/myweb/reg.html
+         * 2. 含参数的/myweb/reg?username=fndaiuwo&password=123455&nickname=daddy&age=22
+         */
+        String[] data = uri.split("\\?");
+        requestURI = data[0];
+        if(data.length > 1){
+            queryString = data[1];
+            data = queryString.split("&");
+            for(String para: data){
+                String[] paras = para.split("=");
+                parameters.put(paras[0], paras.length > 1? paras[1]: null);
+            }
+        }
+
+        System.out.println("requestURI:" + requestURI);
+        System.out.println("queryString:" + queryString);
+        System.out.println("parameters:" + parameters);
     }
 
     /**
@@ -115,5 +147,22 @@ public class HttpServletRequest {
 
     public String getHeader(String name){ // 获取的是消息头中key对应的value
         return headers.get(name);
+    }
+
+    public String getRequestURI() {
+        return requestURI;
+    }
+
+    public String getQueryString() {
+        return queryString;
+    }
+
+    /**
+     * 根据参数名获取对应的参数值
+     * @param name
+     * @return
+     */
+    public String getParameter(String name){
+        return parameters.get(name);
     }
 }
