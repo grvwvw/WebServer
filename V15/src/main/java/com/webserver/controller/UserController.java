@@ -40,11 +40,34 @@ public class UserController {
         String password = request.getParameter("password");
         String nickname = request.getParameter("nickname");
         String ageStr = request.getParameter("age");
+
+        /**
+         * 必要的验证，要求
+         * 1. 四项内容不能为空，并且年龄一定要是数字(正则表达式)
+         * 2. 否则返回一个注册失败的页面: reg_input_error.html
+         * 该页面显示一行字: 输入信息有误，注册失败
+         */
+        if(username == null || password == null || nickname == null || ageStr == null || !ageStr.matches("[0-9]+")){
+            File file = new File(staticDir, "/myweb/reg_input_error.html");
+            response.setContentFile(file);
+            return;
+        }
+
         int age = Integer.parseInt(ageStr);
 
         System.out.println(username + " " + password + " " + nickname + " " + ageStr);
         //2. 将用户信息保存
         File userFile = new File(userDir, username + ".obj");
+
+        /**
+         * 判断是否为重复用户，若重复用户，则响应页面: have_user.html
+         */
+        if(userFile.exists()){ //说明当前是重复的用户
+            File file = new File(staticDir, "have_user.html");
+            response.setContentFile(file);
+            return;
+        }
+
         try(
             FileOutputStream fos = new FileOutputStream(userFile);
             ObjectOutputStream oos = new ObjectOutputStream(fos);
