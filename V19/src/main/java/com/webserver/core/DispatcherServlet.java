@@ -1,5 +1,6 @@
 package com.webserver.core;
 
+import com.webserver.controller.ArticleController;
 import com.webserver.controller.UserController;
 import com.webserver.http.HttpServletRequest;
 import com.webserver.http.HttpServletResponse;
@@ -37,7 +38,12 @@ public class DispatcherServlet {
             UserController controller = new UserController();
             controller.login(request, response);
 
-        }else {
+        }else if("/myweb/writeArticle".equals(path)){
+            System.out.println("开始发表文章！！！！！！！！！");
+            ArticleController controller = new ArticleController();
+            controller.writeArticle(request, response);
+
+        } else {
             File file = new File(staticDir, path);
 
             System.out.println("资源是否存在" + file.exists());
