@@ -4,7 +4,9 @@ import org.omg.CORBA.PRIVATE_MEMBER;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.security.PrivateKey;
 import java.util.HashMap;
 import java.util.Map;
@@ -78,11 +80,9 @@ public class HttpServletRequest {
         requestURI = data[0];
         if(data.length > 1){
             queryString = data[1];
-            data = queryString.split("&");
-            for(String para: data){
-                String[] paras = para.split("=");
-                parameters.put(paras[0], paras.length > 1? paras[1]: null);
-            }
+
+            // 调用parseParameter(String line)方法，将参数的格式为: name1=value1&name2=value2&name3=...的line解析
+            parseParameter(queryString);
         }
 
         System.out.println("requestURI:" + requestURI);
@@ -103,14 +103,58 @@ public class HttpServletRequest {
             headers.put(s[0], s[1]);
         }
 
-        System.out.println("headers:" + headers);
-        // headers.forEach((k, v)-> System.out.println(k + ":" + v));
+        // System.out.println("headers:" + headers);
+        headers.forEach((k, v)-> System.out.println("消息头: " + k + ":" + v));
     }
 
     /**
      * 解析消息正文
      */
-    private void parseContent(){}
+    private void parseContent() throws IOException {
+        /**
+         * 当一个请求的请求方式为POST时，则说明会包含消息正文
+         */
+        if("POST".equalsIgnoreCase(method)){
+            // 判断消息头中是否有Content-Length
+            if(headers.containsKey("Content-Length")){
+                int contentLength = Integer.parseInt(headers.get("Content-Length"));
+                System.out.println("===========>" + contentLength);
+
+                // 根据Content-Length创建对应长度的字节数组
+                byte[] data = new byte[contentLength];
+                InputStream in = socket.getInputStream();
+                in.read(data); //将正文内容读进data数组
+
+                // 判断消息头Content-Type判断正文的类型，并对此进行解析
+                if(headers.containsKey("Content-Type")){
+                    String contentType = headers.get("Content-Type");
+                    System.out.println("============>" + contentType);
+
+                    if("application/x-www-form-urlencoded".equals(contentType)){
+                        String line = new String(data, StandardCharsets.ISO_8859_1);
+                        System.out.println("正文内容=========>" + line);
+
+                        // 调用parseParameter(String line)方法，将参数的格式为: name1=value1&name2=value2&name3=...的line解析
+                        parseParameter(line);
+
+                    } // else if(){} 后期可以扩展其他类型的POST请求
+                }
+            }
+        }
+    }
+
+    /**
+     * 解析参数，参数的格式为: name1=value1&name2=value2&name3=...
+     * 将每一组参数的参数名作为key，参数值作为value存入parameters中
+     * @param line
+     */
+    private void parseParameter(String line){
+        String[] data = line.split("&");
+        for(String para: data){
+            String[] paras = para.split("=");
+            parameters.put(paras[0], paras.length > 1? paras[1]: null);
+        }
+    }
 
 
     /**

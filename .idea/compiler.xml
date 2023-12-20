@@ -20,6 +20,7 @@
         <module name="V15" />
         <module name="V2" />
         <module name="V3" />
+        <module name="V17" />
         <module name="V4" />
         <module name="V5" />
       </profile>
