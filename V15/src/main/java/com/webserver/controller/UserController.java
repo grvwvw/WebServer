@@ -63,7 +63,7 @@ public class UserController {
          * 判断是否为重复用户，若重复用户，则响应页面: have_user.html
          */
         if(userFile.exists()){ //说明当前是重复的用户
-            File file = new File(staticDir, "have_user.html");
+            File file = new File(staticDir, "/myweb/have_user.html");
             response.setContentFile(file);
             return;
         }
