@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用户注册</title>
+</head>
+<body>
+    <center>
+        <h1>用户注册</h1>
+<!--        action: 用于指定表单提交的位置，需要与服务器配合
+            method: 指定提交方式-->
+        <form action="/myweb/reg" method="post">
+            <table border="1">
+                <tr>
+                    <td>用户名</td>
+                    <td><input name="username" type="text" size="32"></td>
+                </tr>
+
+                <tr>
+                    <td>密码</td>
+                    <td><input name="password" type="password" size="32"></td>
+                </tr>
+
+                <tr>
+                    <td>昵称</td>
+                    <td><input name="nickname" type="text" size="32"></td>
+                </tr>
+
+                <tr>
+                    <td>年龄</td>
+                    <td><input name="age" type="text" size="32"></td>
+                </tr>
+
+                <tr align="center">
+                   <td colspan="2"> <button type="submit">注册</button></td>
+                </tr>
+
+            </table>
+        </form>
+    </center>
+</body>
+</html>
