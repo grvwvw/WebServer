@@ -44,6 +44,11 @@ public class DispatcherServlet {
             ArticleController controller = new ArticleController();
             controller.writeArticle(request, response);
 
+        } else if("/myweb/showAllUser".equals(path)){
+            System.out.println("开始暂时用户列表动态页面！！！！！");
+            UserController controller = new UserController();
+            controller.showAllUser(request, response);
+
         } else {
             File file = new File(staticDir, path);
 

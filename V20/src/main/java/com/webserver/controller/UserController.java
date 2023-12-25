@@ -7,6 +7,8 @@ import com.webserver.http.HttpServletResponse;
 
 import java.io.*;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 处理用户相关业务
@@ -116,6 +118,77 @@ public class UserController {
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    /**
+     * 用于动态显示用户列表的动态页面
+     * @param request
+     * @param response
+     */
+    public void showAllUser(HttpServletRequest request, HttpServletResponse response){
+        //1. 先用users目录中所有的用户读入进一个List集合中
+        List<User> userList = new ArrayList<>();
+
+        /*
+            首先获users中所有以名字.obj的子项，然后遍历每个子项并用文件流连接对象输入流进行反序列化，最后将users对象存入到userList集合中
+         */
+        File[] subs = userDir.listFiles(f->f.getName().endsWith(".obj"));
+        for(File userFile: subs){
+            try(
+                FileInputStream fis = new FileInputStream(userFile);
+                ObjectInputStream ois = new ObjectInputStream(fis)
+            ){
+                userList.add((User)ois.readObject());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        //2. 使用程序生成一个页面，同时遍历List集合将用户信息拼接到表格中
+        try (PrintWriter pw = new PrintWriter("./userList.html");){
+            pw.println("<!DOCTYPE html>");
+            pw.println("<html lang=\"en\">");
+            pw.println("<head>");
+            pw.println("<meta charset=\"UTF-8\">");
+            pw.println("<title>展示用户</title>");
+            pw.println("</head>");
+            pw.println("<body>");
+            pw.println("<center>");
+            pw.println("<h1>用户信息</h1>");
+            pw.println("<table border=\"1\">");
+            pw.println("<tr>");
+            pw.println("<td>用户名</td>");
+            pw.println("<td>密码</td>");
+            pw.println("<td>昵称</td>");
+            pw.println("<td>年龄</td>");
+            pw.println("</tr>");
+
+            for(User user: userList){
+                pw.println("<tr>");
+                pw.println("<td>"+ user.getUsername() +"</td>");
+                pw.println("<td>" + user.getPassword() + "</td>");
+                pw.println("<td>"+user.getNickname()+"</td>");
+                pw.println("<td>"+user.getAge()+"</td>");
+                pw.println("</tr>");
+            }
+
+            pw.println("</table>");
+            pw.println("</center>");
+            pw.println("</body>");
+            pw.println("</html>");
+
+
+            System.out.println("生成完毕");
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        //3. 将生成的页面设置到响应中，发送给浏览器
+        File file = new File("./userList.html");
+        response.setContentFile(file);
 
     }
 }
